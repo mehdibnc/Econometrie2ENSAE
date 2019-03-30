@@ -69,6 +69,18 @@ summary(reg)
 #Regardons quelques statistiques descriptives pour les groupes de traitement et de controle 
 #en période 1 (en 98-96). Pour montrer que les groupes ne sont pas forcément comparable.
 
+#common trend assumption
+common_trend <- MAGANewsData[,c("maganews2000","reppresfv2p1992","reppresfv2p1996","reppresfv2p2000","reppresfv2p2004")]
+history_control <- c(mean(common_trend[common_trend$maganews2000 == 0,]$reppresfv2p1992, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 0,]$reppresfv2p1996, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 0,]$reppresfv2p2000, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 0,]$reppresfv2p2004, na.rm = TRUE))
+history_treated <- c(mean(common_trend[common_trend$maganews2000 == 1,]$reppresfv2p1992, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 1,]$reppresfv2p1996, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 1,]$reppresfv2p2000, na.rm = TRUE),mean(common_trend[common_trend$maganews2000 == 1,]$reppresfv2p2004, na.rm = TRUE))
+
+
+plot(c("1992","1996","2000","2004"),history_control,type = 'l', col="green", ylab = "Vote droite", xlab= "Année")
+lines(c("1992","1996","2000","2004"),history_treated,col='blue')
+legend('topleft', c("control","treated") , lty=1, col=c('green', 'blue'), bty='n', cex=.75)
+
+
+
 
 
 
