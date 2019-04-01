@@ -9,12 +9,13 @@ library(Hmisc)
 library(dplyr)
 library(plyr)
 library(reshape2)
-
+library(readr)
+library(lfe)
 
 #Data loading
-MAGANewsData <- read_csv("C:/Users/benoit/Desktop/ENS/ENSAE/2A/S2/Econo 2/projet/MAGANewsData.csv")
+MAGANewsData <- read.csv("C:/Users/benoit/Desktop/ENS/ENSAE/2A/S2/Econo 2/projet/MAGANewsData.csv")
 
-#Vérification de l'unicité du tuple ('state','town','county') dans la base 
+#VÃ©rification de l'unicitÃ© du tuple ('state','town','county') dans la base 
 # ie : chaque ville apparait bien une seule fois
 nrow(unique(MAGANewsData[,c('state','town','county')])) == nrow(MAGANewsData) #youpi
 
@@ -36,7 +37,7 @@ maga_98<-sum(MAGANewsData$maganews1998,na.rm = TRUE)
 maga_00<-sum(MAGANewsData$maganews2000,na.rm = TRUE)
 maga_03<-sum(MAGANewsData$maganews2003,na.rm = TRUE)
 
-#proportion de villes ayant accés à MAGA news en 1998, 2000 et 2003 : 
+#proportion de villes ayant accÃ©s Ã  MAGA news en 1998, 2000 et 2003 : 
 maga_98/nrow(MAGANewsData) #6.3%
 maga_00/nrow(MAGANewsData) #19.5%
 maga_03/nrow(MAGANewsData) #52.3%
@@ -47,7 +48,7 @@ na03<-sum(is.na(MAGANewsData$maganews2003))
 sup_98 <- (maga_98+na98)/nrow(MAGANewsData) #34.22%
 sup_03 <- (maga_03+na03)/nrow(MAGANewsData) #58.9%
 
-#Si on ne considère pas les lignes avec des NA pour chaque année considérée
+#Si on ne considÃ¨re pas les lignes avec des NA pour chaque annÃ©e considÃ©rÃ©e
 maga_98_NA<-sum(na.omit(MAGANewsDataSNA$maganews1998))
 maga_00_NA<-sum(na.omit(MAGANewsDataSNA$maganews2000))
 maga_03_NA<-sum(na.omit(MAGANewsDataSNA$maganews2003))
@@ -81,7 +82,7 @@ summary(reg)
 stargazer(reg)
 
 #Question 3 
-#L'estimateur n'est pas crédible car common trend assumption non satisfaite probablement
+#L'estimateur n'est pas crÃ©dible car common trend assumption non satisfaite probablement
 
 #Rep. 2-party vote share in Presidential elections in 1988
 mean(control$reppresfv2p1988,na.rm = TRUE) 
@@ -96,7 +97,7 @@ vote_rep_control<-c(mean(control$reppresfv2p1988,na.rm = TRUE),mean(control$repp
 vote_rep_treated<-c(mean(treated$reppresfv2p1988,na.rm = TRUE) ,mean(treated$reppresfv2p1992,na.rm = TRUE),mean(treated$reppresfv2p1996,na.rm = TRUE))
 df<-data.frame(year,vote_rep_control, vote_rep_treated, stringsAsFactors=FALSE)
 
-plot(df$vote_rep_control, type="l", col="blue", xlab="année", ylab="Part du vote républicain", main="",  xaxt="n")+
+plot(df$vote_rep_control, type="l", col="blue", xlab="annÃ©e", ylab="Part du vote rÃ©publicain", main="",  xaxt="n")+
   axis(1, at=seq(1, 3, by=1), labels = c("1988","1992","1996"))
   lines(df$vote_rep_treated, col='red')+
   legend("topright", lty=c(1,1), col=c("blue","red"), legend = c("Control", "treated"))
@@ -161,11 +162,26 @@ stargazer(model_3)
 #Question 4
 #calcul
 
+#Question 5
 
 
+###################################
+#Estimation d'impact par reg lin  #
+###################################
 
+reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000,data=MAGANewsDataSNA)
+summary(reg_1)
+reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+summary(reg_2)
 
+###################################
+#Effet placebo                    #
+###################################
 
+placebo_1 <- felm(reppresfv2p96m92 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+summary(placebo_1)
+placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+summary(placebo_2)
 
 
 
