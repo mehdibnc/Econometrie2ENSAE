@@ -11,7 +11,7 @@ library(plyr)
 library(reshape2)
 library(readr)
 library(lfe)
-
+library(gmm)
 #Data loading
 MAGANewsData <- read.csv("C:/Users/benoit/Desktop/ENS/ENSAE/2A/S2/Econo 2/projet/MAGANewsData.csv")
 
@@ -176,13 +176,23 @@ g <- function(beta, data) {
 }
 
 Dg <- function(beta, data) {
-  #mettre un dataframe avec le traitement D en premier et les variables à prendre ensuite
+  #j'ai fais en X barre parce qu'ils font ça sur les docs
   data<-as.data.frame(data)
   d <- as.numeric(data[,1])
   x <- data.matrix(data[, 2:ncol(data)])
-  m <- (t(x)*exp(x%*%beta))*(as.vector(1-d))*as.matrix(x)
-  return(cbind(m))
+  x[is.na(x)] <- 0
+  res <- matrix(0,nrow=length(beta),ncol=length(beta))
+  for (i in 1:length(beta)){
+    xbar <- mean(x[,i])
+    dbar<- mean(d)
+    co <- exp(xbar*beta[i])*(1-dbar)*xbar^2
+    res[i,i]<-co
+  }
+  
+  return(res)
 }
+
+
 
 data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996","reppresfv2p1996","nocable2000","nocable1998", "noch2000","hs2000","college2000","male2000","married2000","hisp2000","black2000","pop2000","unempl2000","income2000")]
 g(beta = rep(0, times = 14),data = data_1)
