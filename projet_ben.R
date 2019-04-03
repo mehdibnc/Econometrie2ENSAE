@@ -163,24 +163,34 @@ stargazer(model_3)
 #calcul
 
 #Question 5
+
 #GMM 
-moments <- function(beta, data) {
+
+g <- function(beta, data) {
   #mettre un dataframe avec le traitement D en premier et les variables à prendre ensuite
   data<-as.data.frame(data)
   d <- as.numeric(data[,1])
   x <- data.matrix(data[, 2:ncol(data)])
-  m <- t(exp(x%*%beta)*(1-d)-d)%*%as.matrix(x)
+  m <- as.vector((exp(x%*%beta)*(as.vector(1-d))))*as.matrix(x)
   return(cbind(m))
 }
 
+Dg <- function(beta, data) {
+  #mettre un dataframe avec le traitement D en premier et les variables à prendre ensuite
+  data<-as.data.frame(data)
+  d <- as.numeric(data[,1])
+  x <- data.matrix(data[, 2:ncol(data)])
+  m <- (t(x)*exp(x%*%beta))*(as.vector(1-d))*as.matrix(x)
+  return(cbind(m))
+}
 
-data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996")]
-moments(beta = as.matrix(c(1:2)),data = data_1)
+data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996","reppresfv2p1996","nocable2000","nocable1998", "noch2000","hs2000","college2000","male2000","married2000","hisp2000","black2000","pop2000","unempl2000","income2000")]
+g(beta = rep(0, times = 14),data = data_1)
+Dg(beta = rep(0, times = 14),data = data_1)
 
-gmm_1<- gmm(moments,data_1)
+gmm_model <- gmm(g,data_1,rep(0, times = 14), type=c("twoStep"))
+summary(gmm_model)
 
-
-summary(gmm_1)
 
 ###################################
 #Estimation d'impact par reg lin  #
