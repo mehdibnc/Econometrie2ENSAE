@@ -163,7 +163,24 @@ stargazer(model_3)
 #calcul
 
 #Question 5
+#GMM 
+moments <- function(beta, data) {
+  #mettre un dataframe avec le traitement D en premier et les variables à prendre ensuite
+  data<-as.data.frame(data)
+  d <- as.numeric(data[,1])
+  x <- data.matrix(data[, 2:ncol(data)])
+  m <- t(exp(x%*%beta)*(1-d)-d)%*%as.matrix(x)
+  return(cbind(m))
+}
 
+
+data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996")]
+moments(beta = as.matrix(c(1:2)),data = data_1)
+
+gmm_1<- gmm(moments,data_1)
+
+
+summary(gmm_1)
 
 ###################################
 #Estimation d'impact par reg lin  #
@@ -182,6 +199,10 @@ placebo_1 <- felm(reppresfv2p96m92 ~ maganews2000 + totpreslvpop1996 + reppresfv
 summary(placebo_1)
 placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
 summary(placebo_2)
+
+
+
+
 
 
 
