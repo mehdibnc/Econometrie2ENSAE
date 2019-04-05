@@ -202,9 +202,27 @@ Dg(beta = rep(0, times = 14),data = data_1)
 init <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
 summary(lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))
 
-gmm1 <- gmm(g,data_1,t0=rep(0,14),type="iterative",itermax = 5000,tol = 1e-15)
-summary(gmm1)
-stargazer(gmm1)
+gmm3 <- gmm(g,data_1,t0=rep(0,14),type="iterative",itermax = 5000,tol = 1e-15)
+summary(gmm3)
+stargazer(gmm3)
+
+
+
+data_chap_model3 <- MAGANewsDataSNA[,c("reppresfv2p00m96","maganews2000","totpreslvpop1996","reppresfv2p1996","nocable1998","college00m90","hs00m90", "noch1998","unempl00m90","income00m90","pop18p2000","sub1998","poptot1998","black00m90","hisp00m90")]
+theta_chap <- function(coefs,data){
+  #maganews2000 en deuxieme colonne
+  #en premiere colonne il faut la variable reppresfv2p00m96
+  #puis a partir de la variable 3 c'est les X
+  data<-as.data.frame(data)
+  y <- as.numeric(data[,1])
+  d <- as.numeric(data[,2])
+  x <- cbind(1,data.matrix(data[,3:ncol(data)]))
+  e <- exp(x%*%coefs)
+  return((1/sum(d,na.rm = T))*sum(y*(d-(1-d)*e),na.rm = T))
+}
+
+thetha_chap(as.matrix(gmm3$coefficients),data_chap_model3) #estimateur theta chapeau pour le modele 3
+
 
 
 ###################################
