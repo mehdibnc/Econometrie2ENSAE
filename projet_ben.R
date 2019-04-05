@@ -150,10 +150,10 @@ mean_sd(treated,"reppresfv2p2000")
 model_1 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996,family=binomial(link='logit'),data=MAGANewsData)
 summary(model_1)
 stargazer(model_1)
-model_2 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998,family=binomial(link='logit'),data=MAGANewsDataSNA)
+model_2 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +nocable1998+noch1998 ,family=binomial(link='logit'),data=MAGANewsDataSNA)
 summary(model_2)
 stargazer(model_2)
-model_3 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000,family=binomial(link='logit'),data=MAGANewsDataSNA)
+model_3 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,family=binomial(link='logit'),data=MAGANewsDataSNA)
 summary(model_3)
 stargazer(model_3)
 #Question 3
@@ -194,12 +194,17 @@ Dg <- function(beta, data) {
 
 
 
-data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996","reppresfv2p1996","nocable2000","nocable1998", "noch2000","hs2000","college2000","male2000","married2000","hisp2000","black2000","pop2000","unempl2000","income2000")]
-g(beta = rep(0, times = 14),data = data_1)
+data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996","reppresfv2p1996","nocable1998","college00m90","hs00m90", "noch1998","unempl00m90","income00m90","pop18p2000","sub1998","poptot1998","black00m90","hisp00m90")]
+
+g(beta = as.vector(init)[1:14],data = data_1)
 Dg(beta = rep(0, times = 14),data = data_1)
 
-gmm_model <- gmm(g,data_1,rep(0, times = 14), type=c("twoStep"))
-summary(gmm_model)
+init <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
+summary(lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))
+
+gmm1 <- gmm(g,data_1,t0=rep(0,14),type="iterative",itermax = 5000,tol = 1e-15)
+summary(gmm1)
+stargazer(gmm1)
 
 
 ###################################
