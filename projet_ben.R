@@ -237,10 +237,12 @@ thetha_chap(as.matrix(gmm3$coefficients),data_chap_model3) #estimateur theta cha
 #Estimation d'impact par reg lin  #
 ###################################
 
-reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000,data=MAGANewsDataSNA)
+reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000,data=MAGANewsDataSNA,weights=(1/totpresvotes1996))
 summary(reg_1)
-reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+we<-c(1/MAGANewsDataSNA$totpresvotes1996)
+reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county,data=MAGANewsDataSNA,weights=we)
 summary(reg_2)
+
 
 ###################################
 #Effet placebo                    #
