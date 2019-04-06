@@ -194,17 +194,25 @@ Dg <- function(beta, data) {
 
 
 
-data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996","reppresfv2p1996","nocable1998","college00m90","hs00m90", "noch1998","unempl00m90","income00m90","pop18p2000","sub1998","poptot1998","black00m90","hisp00m90")]
+init <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
+summary(lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data = MAGANewsDataSNA))
 
-g(beta = as.vector(init)[1:14],data = data_1)
-Dg(beta = rep(0, times = 14),data = data_1)
-
-init <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
-summary(lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 + nocable1998 +college00m90+hs00m90+ noch1998+unempl00m90+income00m90+pop18p2000+sub1998+poptot1998+black00m90+hisp00m90,data = MAGANewsDataSNA))
-
-gmm3 <- gmm(g,data_1,t0=rep(0,14),type="iterative",itermax = 5000,tol = 1e-15)
+gmm3 <- gmm(g,na.omit(data_3),t0=as.vector(init)[2:14],type="iterative",itermax = 5000,tol = 1e-15)
 summary(gmm3)
 stargazer(gmm3)
+
+data_2 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998","sub1998")]
+init2 <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +sub1998,data = MAGANewsDataSNA))$coefficients
+gmm2 <- gmm(g,na.omit(data_2),t0=as.vector(init2)[2:6],type="iterative",itermax = 5000,tol = 1e-15)
+summary(gmm2)
+stargazer(gmm2)
+
+
+data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996")]
+init1 <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996,data = MAGANewsDataSNA))$coefficients
+gmm1 <- gmm(g,na.omit(data_1),t0=as.vector(init1)[2:3],type="iterative",itermax = 5000,tol = 1e-15)
+summary(gmm1)
+stargazer(gmm1)
 
 
 
