@@ -112,30 +112,39 @@ mean_sd <- function(base,variable){
   
 mean_sd(control,"college2000")
 mean_sd(treated,"college2000")
+mean_sd(MAGANewsData,"college2000")
 
 mean_sd(control,"male2000")
 mean_sd(treated,"male2000")
+mean_sd(MAGANewsData,"male2000")
 
 mean_sd(control,"black2000")
 mean_sd(treated,"black2000")
+mean_sd(MAGANewsData,"black2000")
 
 mean_sd(control,"hisp2000")
 mean_sd(treated,"hisp2000")
+mean_sd(MAGANewsData,"hisp2000")
 
 mean_sd(control,"married2000")
 mean_sd(treated,"married2000")
+mean_sd(MAGANewsData,"married2000")
 
 mean_sd(control,"urban2000")
 mean_sd(treated,"urban2000")
+mean_sd(MAGANewsData,"urban2000")
 
 mean_sd(control,"unempl2000")
 mean_sd(treated,"unempl2000")
-  
+mean_sd(MAGANewsData,"unempl2000")
+
 mean_sd(control,"pop2000")
 mean_sd(treated,"pop2000")
-  
+mean_sd(MAGANewsData,"pop2000")
+
 mean_sd(control,"reppresfv2p2000")
 mean_sd(treated,"reppresfv2p2000")
+mean_sd(MAGANewsData,"reppresfv2p2000")
   
   
 ###################################
