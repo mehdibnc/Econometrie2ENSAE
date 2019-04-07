@@ -193,30 +193,33 @@ Dg <- function(beta, data) {
 }
 
 
-
-init <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
-summary(lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data = MAGANewsDataSNA))
-
-gmm3 <- gmm(g,na.omit(data_3),t0=as.vector(init)[2:14],type="iterative",itermax = 5000,tol = 1e-15)
+data_3 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998", "college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")]
+init3 <- (lm(maganews2000 ~ 0+totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data = MAGANewsDataSNA))$coefficients
+gmm3 <- gmm(g,na.omit(data_3),t0=init3,type="iterative",itermax = 5000,tol = 1e-15)
 summary(gmm3)
 stargazer(gmm3)
 
 data_2 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998","sub1998")]
-init2 <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +sub1998,data = MAGANewsDataSNA))$coefficients
-gmm2 <- gmm(g,na.omit(data_2),t0=as.vector(init2)[2:6],type="iterative",itermax = 5000,tol = 1e-15)
+init2 <- (lm(maganews2000 ~ 0+totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +sub1998,data = MAGANewsDataSNA))$coefficients
+gmm2 <- gmm(g,na.omit(data_2),t0=init2,type="iterative",itermax = 5000,tol = 1e-15)
 summary(gmm2)
 stargazer(gmm2)
 
 
 data_1 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996")]
-init1 <- (lm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996,data = MAGANewsDataSNA))$coefficients
-gmm1 <- gmm(g,na.omit(data_1),t0=as.vector(init1)[2:3],type="iterative",itermax = 5000,tol = 1e-15)
+init1 <- (lm(maganews2000 ~ 0+totpreslvpop1996 + reppresfv2p1996,data = MAGANewsDataSNA))$coefficients
+gmm1 <- gmm(g,na.omit(data_1),t0=init1,type="iterative",itermax = 5000,tol = 1e-15)
 summary(gmm1)
 stargazer(gmm1)
 
 
+#pour voir combien on perds avec le na.omit : 
+nrow(na.omit(data_3))
+nrow(na.omit(data_2))
+nrow(na.omit(data_1))
 
-data_chap_model3 <- MAGANewsDataSNA[,c("reppresfv2p00m96","maganews2000","totpreslvpop1996","reppresfv2p1996","nocable1998","college00m90","hs00m90", "noch1998","unempl00m90","income00m90","pop18p2000","sub1998","poptot1998","black00m90","hisp00m90")]
+
+
 theta_chap <- function(coefs,data){
   #maganews2000 en deuxieme colonne
   #en premiere colonne il faut la variable reppresfv2p00m96
@@ -224,13 +227,66 @@ theta_chap <- function(coefs,data){
   data<-as.data.frame(data)
   y <- as.numeric(data[,1])
   d <- as.numeric(data[,2])
-  x <- cbind(1,data.matrix(data[,3:ncol(data)]))
+  x <- data.matrix(data[,3:ncol(data)])
   e <- exp(x%*%coefs)
   return((1/sum(d,na.rm = T))*sum(y*(d-(1-d)*e),na.rm = T))
 }
 
-thetha_chap(as.matrix(gmm3$coefficients),data_chap_model3) #estimateur theta chapeau pour le modele 3
 
+data_chap_model3 <- MAGANewsDataSNA[,c("reppresfv2p00m96" ,"maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998", "college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")]
+theta_chap(as.matrix(gmm3$coefficients),na.omit(data_chap_model3)) #estimateur theta chapeau pour le modele 3
+
+data_chap_model2 <- MAGANewsDataSNA[,c("reppresfv2p00m96", "maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998","sub1998")]
+theta_chap(as.matrix(gmm2$coefficients),na.omit(data_chap_model2)) #estimateur theta chapeau pour le modele 2
+
+data_chap_model1 <- MAGANewsDataSNA[,c("reppresfv2p00m96", "maganews2000","totpreslvpop1996", "reppresfv2p1996")]
+theta_chap(as.matrix(gmm1$coefficients),na.omit(data_chap_model1)) #estimateur theta chapeau pour le modele 1
+
+
+var_theta_chap <- function(coefs,data){
+  #coefs les coefficients du gmm
+  #data exactement les memes formats que les data_chap_modeli
+  #comme pour theta_chap, il faut lancer avec na.omit(data_chap...)
+  #sinon des NA se mettent dans les matrices et ça explose 
+  data<-as.data.frame(data)
+  y <- as.numeric(data[,1])
+  d <- as.numeric(data[,2])
+  x <- data.matrix(data[,3:ncol(data)])
+  II <- c()
+  FF <- c()
+  U<-c()
+  for (i in 1:dim(x)[1]){
+    yi <- y[i]
+    di <- d[i]
+    xi <- x[i,]
+    ei <- exp(xi %*% coefs)
+    I <- sum(t(xi)%*%xi * (1-di)*ei) 
+    II <- c(II,I)
+    f<-(di-(1-di)*ei)
+    u <- yi*(1-di)*as.vector(xi)*ei
+    U <- c(U,u)
+  }
+  EU <- sum(U)/length(U)
+  EI <- sum(II)/length(II)
+  EI <- 1/EI
+  res=c()
+  for (i in 1:dim(x)[1]){
+    yi <- y[i]
+    di <- d[i]
+    xi <- x[i,]
+    ei <- exp(xi %*% coefs)
+    f1i <- (di-(1-di)*ei)
+    aux <- f1i*(yi-xi*EU*EI)
+    aux2 <- aux*aux
+    res <- c(res,aux2)
+  }
+  fin <- sum(res)/length(res)
+  return(fin)
+}
+
+sd_theta_chap3 <- sqrt(var_theta_chap(as.matrix(gmm3$coefficients),na.omit(data_chap_model3)))
+sd_theta_chap2 <- sqrt(var_theta_chap(as.matrix(gmm2$coefficients),na.omit(data_chap_model2)))
+sd_theta_chap1 <- sqrt(var_theta_chap(as.matrix(gmm1$coefficients),na.omit(data_chap_model1)))
 
 
 ###################################
