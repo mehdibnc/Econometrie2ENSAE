@@ -363,7 +363,7 @@ placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 + reppresfv2p1992 + noch1998 
 summary(placebo_1)
 stargazer(placebo_1)
 
-placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + reppresfv1988 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
+placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + reppresfv2p1988 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
 summary(placebo_2)
 stargazer(placebo_2)
 
