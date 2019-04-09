@@ -329,3 +329,65 @@ we<-c(1/data_placebo_2$totpresvotes1988)
 placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000+reppresfv2p1988+ +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_2,weights=we)
 summary(placebo_2)
 stargazer(placebo_2)
+
+
+#######################
+## ALTERNATIVE ########
+#######################
+
+
+
+
+###################################
+#Estimation d'impact par reg lin  #
+###################################
+we<-c(1/MAGANewsDataSNA$totpresvotes1996)
+
+reg_1 <- lm(reppresfv2p00m96 ~  maganews2000  + reppresfv2p1996 +noch1998+ nocable1998  + sub1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data=MAGANewsDataSNA,weights=we)
+summary(reg_1)
+stargazer(reg_1)
+
+reg_2 <- lm(reppresfv2p00m96 ~  maganews2000  + reppresfv2p1996 +noch1998+ nocable1998  + sub1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state,data=MAGANewsDataSNA,weights=we)
+summary(reg_2)
+stargazer(reg_2)
+
+
+###################################
+#Effet placebo                    #
+###################################
+
+
+we<-c(1/MAGANewsDataSNA$totpresvotes1996)
+
+placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 +reppresfv2p92m88 + noch1998 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
+summary(placebo_1)
+stargazer(placebo_1)
+
+placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + reppresfv1988 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
+summary(placebo_2)
+stargazer(placebo_2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
