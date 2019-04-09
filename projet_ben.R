@@ -1,4 +1,4 @@
-setwd("C://Users//benoit//Desktop//ENS//ENSAE//2A//S2//Econo 2//projet")
+setwd("")
 
 #Requirements
 library(haven)
@@ -13,7 +13,7 @@ library(readr)
 library(lfe)
 library(gmm)
 #Data loading
-MAGANewsData <- read.csv("C:/Users/benoit/Desktop/ENS/ENSAE/2A/S2/Econo 2/projet/MAGANewsData.csv")
+MAGANewsData <- read.csv("MAGANewsData.csv")
 
 #Vérification de l'unicité du tuple ('state','town','county') dans la base 
 # ie : chaque ville apparait bien une seule fois
@@ -99,8 +99,14 @@ df<-data.frame(year,vote_rep_control, vote_rep_treated, stringsAsFactors=FALSE)
 
 plot(df$vote_rep_control, type="l", col="blue", xlab="année", ylab="Part du vote républicain", main="",  xaxt="n")+
   axis(1, at=seq(1, 3, by=1), labels = c("1988","1992","1996"))
-  lines(df$vote_rep_treated, col='red')+
+lines(df$vote_rep_treated, col='red')+
   legend("topright", lty=c(1,1), col=c("blue","red"), legend = c("Control", "treated"))
+
+
+sum(is.na(MAGANewsData$reppresfv2p1988))/9256
+sum(is.na(MAGANewsData$reppresfv2p1992))/9256
+sum(is.na(MAGANewsData$reppresfv2p1996))/9256
+
 
 
 
@@ -109,7 +115,7 @@ plot(df$vote_rep_control, type="l", col="blue", xlab="année", ylab="Part du vot
 mean_sd <- function(base,variable){
   return(c(mean(base[[variable]],na.rm = TRUE),sd(base[[variable]],na.rm = TRUE)))
 }
-  
+
 mean_sd(control,"college2000")
 mean_sd(treated,"college2000")
 mean_sd(MAGANewsData,"college2000")
@@ -145,8 +151,7 @@ mean_sd(MAGANewsData,"pop2000")
 mean_sd(control,"reppresfv2p2000")
 mean_sd(treated,"reppresfv2p2000")
 mean_sd(MAGANewsData,"reppresfv2p2000")
-  
-  
+
 ###################################
 #Selection et Score de Propension#
 ###################################
@@ -159,13 +164,14 @@ mean_sd(MAGANewsData,"reppresfv2p2000")
 model_1 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996,family=binomial(link='logit'),data=MAGANewsData)
 summary(model_1)
 stargazer(model_1)
-model_2 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +nocable1998+noch1998 ,family=binomial(link='logit'),data=MAGANewsDataSNA)
+model_2 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +nocable1998+noch1998+sub1998 ,family=binomial(link='logit'),data=MAGANewsDataSNA)
 summary(model_2)
 stargazer(model_2)
 model_3 <- glm(maganews2000 ~ totpreslvpop1996 + reppresfv2p1996 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,family=binomial(link='logit'),data=MAGANewsDataSNA)
 summary(model_3)
 stargazer(model_3)
 #Question 3
+
 
 
 #Question 4
@@ -184,22 +190,7 @@ g <- function(beta, data) {
   return(cbind(m))
 }
 
-Dg <- function(beta, data) {
-  #j'ai fais en X barre parce qu'ils font ça sur les docs
-  data<-as.data.frame(data)
-  d <- as.numeric(data[,1])
-  x <- data.matrix(data[, 2:ncol(data)])
-  x[is.na(x)] <- 0
-  res <- matrix(0,nrow=length(beta),ncol=length(beta))
-  for (i in 1:length(beta)){
-    xbar <- mean(x[,i])
-    dbar<- mean(d)
-    co <- exp(xbar*beta[i])*(1-dbar)*xbar^2
-    res[i,i]<-co
-  }
-  
-  return(res)
-}
+
 
 
 data_3 <- MAGANewsDataSNA[,c("maganews2000","totpreslvpop1996", "reppresfv2p1996","noch1998", "nocable1998", "college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")]
@@ -290,6 +281,7 @@ var_theta_chap <- function(coefs,data){
     res <- c(res,aux2)
   }
   fin <- sum(res)/length(res)
+  fin <- fin/(mean(d)^2)
   return(fin)
 }
 
@@ -298,14 +290,17 @@ sd_theta_chap2 <- sqrt(var_theta_chap(as.matrix(gmm2$coefficients),na.omit(data_
 sd_theta_chap1 <- sqrt(var_theta_chap(as.matrix(gmm1$coefficients),na.omit(data_chap_model1)))
 
 
+
+
+
 ###################################
 #Estimation d'impact par reg lin  #
 ###################################
 
-reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000,data=MAGANewsDataSNA,weights=(1/totpresvotes1996))
+reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + reppresfv2p1996+reppresfv2p92m88+reppresfv2p96m92 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data=MAGANewsDataSNA,weights=(1/totpresvotes1996))
 summary(reg_1)
 we<-c(1/MAGANewsDataSNA$totpresvotes1996)
-reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county,data=MAGANewsDataSNA,weights=we)
+reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + reppresfv2p1996+reppresfv2p92m88+reppresfv2p96m92 +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county,data=MAGANewsDataSNA,weights=we)
 summary(reg_2)
 
 
@@ -313,17 +308,24 @@ summary(reg_2)
 #Effet placebo                    #
 ###################################
 
-placebo_1 <- felm(reppresfv2p96m92 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+
+data_placebo_1 <- MAGANewsDataSNA[,c("county","totpresvotes1992","reppresfv2p92m88","reppresfv2p96m92", "maganews2000", "reppresfv2p1992","noch1998", "nocable1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
+data_placebo_1 <- na.omit(data_placebo_1) 
+
+we<-c(1/data_placebo_1$totpresvotes1992)
+
+placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 +reppresfv2p92m88+ reppresfv2p1992+noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_1,weights=we)
 summary(placebo_1)
-placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + totpreslvpop1996 + reppresfv2p1996 + nocable2000 + nocable1998 + noch2000 + noch1998 + hs2000+college2000+male2000+married2000+hisp2000+black2000+pop2000+unempl2000+income2000 | county ,data=MAGANewsDataSNA)
+stargazer(placebo_1)
+
+
+
+
+data_placebo_2 <- MAGANewsDataSNA[,c("county","totpresvotes1988","reppresfv2p1988","reppresfv2p92m88", "maganews2000", "reppresfv2p1996","noch1998", "nocable1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
+data_placebo_2 <- na.omit(data_placebo_2) 
+
+we<-c(1/data_placebo_2$totpresvotes1988)
+
+placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000+reppresfv2p1988+ +noch1998+ nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_2,weights=we)
 summary(placebo_2)
-
-
-
-
-
-
-
-
-
-
+stargazer(placebo_2)
