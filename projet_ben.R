@@ -359,7 +359,7 @@ stargazer(reg_2)
 
 we<-c(1/MAGANewsDataSNA$totpresvotes1996)
 
-placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 +reppresfv2p92m88 + noch1998 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
+placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 + reppresfv2p1992 + noch1998 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | state ,data=MAGANewsDataSNA,weights=we)
 summary(placebo_1)
 stargazer(placebo_1)
 
