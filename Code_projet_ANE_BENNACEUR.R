@@ -282,11 +282,11 @@ sd_theta_chap1 <- sqrt(var_theta_chap(as.matrix(gmm1$coefficients),na.omit(data_
 
 #Question 1
 
-reg_1 <- lm(reppresfv2p00m96 ~ maganews2000 + reppresfv2p1996 + reppresfv2p96m92 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data=MAGANewsDataSNA,weights=MAGANewsDataSNA$totpresvotes1996)
+reg_1 <- lm(reppresfv2p00m96 ~  maganews2000+ totpresvotes1996 + reppresfv2p1996 + reppresfv2p96m92 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90,data=MAGANewsDataSNA,weights=MAGANewsDataSNA$totpresvotes1996)
 summary(reg_1)
 stargazer((reg_1))
 
-reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + reppresfv2p1996 + reppresfv2p96m92 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 |county, data=MAGANewsDataSNA,weights=MAGANewsDataSNA$totpresvotes1996)
+reg_2 <- felm(reppresfv2p00m96 ~ maganews2000 + totpresvotes1996 + reppresfv2p1996 + reppresfv2p96m92 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 |county, data=MAGANewsDataSNA,weights=MAGANewsDataSNA$totpresvotes1996)
 summary(reg_2)
 stargazer((reg_2))
 
@@ -300,7 +300,7 @@ data_placebo_1 <- MAGANewsDataSNA[,c("county","reppresfv2p96m92","reppresfv2p199
 data_placebo_1 <- na.omit(data_placebo_1)
 
 we<-c(data_placebo_1$totpresvotes1996)
-placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 + reppresfv2p1996+ reppresfv2p1988 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_1,weights=we)
+placebo_1 <- felm(reppresfv2p96m92 ~ maganews2000 + totpresvotes1996 + reppresfv2p1996+ reppresfv2p1988 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_1,weights=we)
 summary(placebo_1)
 stargazer(placebo_1)
 
@@ -308,6 +308,6 @@ data_placebo_2 <- MAGANewsDataSNA[,c("county","reppresfv2p1996","reppresfv2p1988
 data_placebo_2 <- na.omit(data_placebo_2)
 
 we<-c(data_placebo_2$totpresvotes1996)
-placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + reppresfv2p1996 + reppresfv2p1988 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_2,weights=we)
+placebo_2 <- felm(reppresfv2p92m88 ~ maganews2000 + totpresvotes1996 + reppresfv2p1996 + reppresfv2p1988 + nocable1998 +college00m90+hs00m90 +unempl00m90+income00m90+sub1998+poptot1998+pop18p2000+black00m90+hisp00m90 | county ,data=data_placebo_2,weights=we)
 summary(placebo_2)
 stargazer(placebo_2)
