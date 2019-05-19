@@ -296,7 +296,7 @@ stargazer((reg_2))
 #Partie 4                         #
 ###################################
 
-data_placebo_1 <- MAGANewsDataSNA[,c("county","reppresfv2p96m92","reppresfv2p1996","reppresfv2p1988","totpresvotes1996", "maganews2000","nocable1998", "reppresfv2p1992","noch1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
+data_placebo_1 <- MAGANewsDataSNA[,c("county","reppresfv2p96m92","reppresfv2p1996","reppresfv2p1988","totpresvotes1996", "maganews2000","nocable1998", "reppresfv2p1992","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
 data_placebo_1 <- na.omit(data_placebo_1)
 
 we<-c(data_placebo_1$totpresvotes1996)
