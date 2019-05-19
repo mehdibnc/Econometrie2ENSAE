@@ -24,7 +24,7 @@ library(pscl)
 
 MAGANewsData <- read.csv("C:/Users/benoit/Desktop/ENS/ENSAE/2A/S2/Econo 2/projet/MAGANewsData.csv")
 
-#Vérification de l'unicité du tuple ('state','town','county') dans la base 
+#VÃ©rification de l'unicitÃ© du tuple ('state','town','county') dans la base 
 # ie : chaque ville apparait bien une seule fois
 nrow(unique(MAGANewsData[,c('state','town','county')])) == nrow(MAGANewsData) #youpi
 
@@ -98,7 +98,7 @@ vote_rep_control<-c(mean(control$reppresfv2p1988,na.rm = TRUE),mean(control$repp
 vote_rep_treated<-c(mean(treated$reppresfv2p1988,na.rm = TRUE) ,mean(treated$reppresfv2p1992,na.rm = TRUE),mean(treated$reppresfv2p1996,na.rm = TRUE))
 df<-data.frame(year,vote_rep_control, vote_rep_treated, stringsAsFactors=FALSE)
 
-plot(df$vote_rep_control, type="l", col="blue", xlab="année", ylab="Part du vote républicain", main="",  xaxt="n")+
+plot(df$vote_rep_control, type="l", col="blue", xlab="annÃ©e", ylab="Part du vote rÃ©publicain", main="",  xaxt="n")+
   axis(1, at=seq(1, 3, by=1), labels = c("1988","1992","1996"))
 lines(df$vote_rep_treated, col='red')+
   legend("topright", lty=c(1,1), col=c("blue","red"), legend = c("Control", "treated"))
@@ -177,7 +177,7 @@ stargazer(model_3)
 
 
 g <- function(beta, data) {
-  #mettre un dataframe avec le traitement D en premier et les variables à prendre ensuite
+  #mettre un dataframe avec le traitement D en premier et les variables Ã  prendre ensuite
   data<-as.data.frame(data)
   d <- as.numeric(data[,1])
   x <- data.matrix(data[, 2:ncol(data)])
@@ -233,7 +233,7 @@ var_theta_chap <- function(coefs,data){
   #coefs les coefficients du gmm
   #data exactement les memes formats que les data_chap_modeli
   #comme pour theta_chap, il faut lancer avec na.omit(data_chap...)
-  #sinon des NA se mettent dans les matrices et ça explose 
+  #sinon des NA se mettent dans les matrices et Ã§a explose 
   data<-as.data.frame(data)
   y <- as.numeric(data[,1])
   d <- as.numeric(data[,2])
@@ -296,7 +296,7 @@ stargazer((reg_2))
 #Partie 4                         #
 ###################################
 
-data_placebo_1 <- MAGANewsDataSNA[,c("county","state","reppresfv2p1996","reppresfv2p1988","totpresvotes1996","totpresvotes1992","reppresfv2p92m88","reppresfv2p96m92", "maganews2000","nocable1998", "reppresfv2p1992","noch1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
+data_placebo_1 <- MAGANewsDataSNA[,c("county","reppresfv2p96m92","reppresfv2p1996","reppresfv2p1988","totpresvotes1996", "maganews2000","nocable1998", "reppresfv2p1992","noch1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
 data_placebo_1 <- na.omit(data_placebo_1)
 
 we<-c(data_placebo_1$totpresvotes1996)
@@ -304,7 +304,7 @@ placebo_1 <- felm(reppresfv2p96m92 ~  maganews2000 + reppresfv2p1996+ reppresfv2
 summary(placebo_1)
 stargazer(placebo_1)
 
-data_placebo_2 <- MAGANewsDataSNA[,c("county","state","reppresfv2p1996","reppresfv2p1988","reppresfv2p96m92","totpresvotes1996","totpresvotes1988","reppresfv2p1988","reppresfv2p92m88", "maganews2000", "reppresfv2p1996", "nocable1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
+data_placebo_2 <- MAGANewsDataSNA[,c("county","reppresfv2p1996","reppresfv2p1988","totpresvotes1996","reppresfv2p92m88", "maganews2000", "nocable1998","college00m90","hs00m90","unempl00m90","income00m90","sub1998","poptot1998","pop18p2000","black00m90","hisp00m90")] 
 data_placebo_2 <- na.omit(data_placebo_2)
 
 we<-c(data_placebo_2$totpresvotes1996)
